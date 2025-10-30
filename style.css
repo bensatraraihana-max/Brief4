@@ -1184,6 +1184,7 @@
   font-size: 14px;
   outline: none;
   transition: border-color 0.3s;
+  color: #000;
 }
 
 .contact-field-group input:focus {

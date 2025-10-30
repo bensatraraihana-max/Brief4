@@ -1,54 +1,61 @@
-// ==========================================
-// SPACE ODYSSEY - JAVASCRIPT PRINCIPAL
-// ==========================================
-// ==========================================
+
 // 1. DONNÉES DES MISSIONS (Simuler un JSON)
-// ==========================================
 let missions = [
-  {
+ {
     id: 1,
-    nom: "Apollo 11",
-    agence: "NASA",
-    date: "1969-07-16",
-    objectif: "Premier alunissage habité",
-    description: "Mission historique qui a permis à l'humanité de marcher sur la Lune pour la première fois.",
-    image: "images/1.png"
+    name: "Apollo 11",
+    agency: "NASA",
+    objective: "Premier alunissage habité",
+    launchDate: "1969-07-16",
+    image: "images/apollo11.jpg"
   },
   {
     id: 2,
-    nom: "Curiosity Rover",
-    agence: "NASA",
-    date: "2011-11-26",
-    objectif: "Exploration de Mars",
-    description: "Robot explorateur conçu pour étudier la surface martienne et chercher des signes de vie passée.",
-    image: "images/2.png"
+    name: "Voyager 1",
+    agency: "NASA",
+    objective: "Exploration du système solaire externe",
+    launchDate: "1977-09-05",
+    image: "images/voyager1.jpg"
   },
   {
     id: 3,
-    nom: "James Webb Space Telescope",
-    agence: "NASA",
-    date: "2021-12-25",
-    objectif: "Observation de l'univers lointain",
-    description: "Télescope spatial le plus puissant pour observer les galaxies lointaines et l'origine de l'univers.",
-    image: "images/3.png"
+    name: "Rosetta",
+    agency: "ESA",
+    objective: "Étude de la comète 67P/Churyumov-Gerasimenko",
+    launchDate: "2004-03-02",
+    image: "images/rosetta.jpg"
   },
   {
     id: 4,
-    nom: "Artemis I",
-    agence: "NASA",
-    date: "2022-11-16",
-    objectif: "Retour vers la Lune",
-    description: "Mission test pour préparer le retour des humains sur la surface lunaire.",
-    image: "images/4.png"
+    name: "Curiosity",
+    agency: "NASA",
+    objective: "Exploration du cratère Gale sur Mars",
+    launchDate: "2011-11-26",
+    image: "images/curiosity.jpg"
   },
   {
     id: 5,
-    nom: "Hubble Space Telescope",
-    agence: "NASA",
-    date: "1990-04-24",
-    objectif: "Observation spatiale",
-    description: "Télescope qui a capturé des images incroyables de l'univers pendant plus de 30 ans.",
-    image: "images/5.png"
+    name: "Artemis I",
+    agency: "NASA",
+    objective: "Test du système de lancement SLS et d’Orion",
+    launchDate: "2022-11-16",
+    image: "images/artemis1.jpg"
+  },
+  {
+    id: 6,
+    name: "James Webb Space Telescope",
+    agency: "NASA/ESA/CSA",
+    objective: "Observation de l’univers primitif",
+    launchDate: "2021-12-25",
+    image: "images/jwst.jpg"
+  },
+  {
+    id: 7,
+    name: "BepiColombo",
+    agency: "ESA/JAXA",
+    objective: "Exploration de la planète Mercure",
+    launchDate: "2018-10-20",
+    image: "images/bepicolombo.jpg"
   }
 ];
 
@@ -309,7 +316,7 @@ function ajouterBoutonsFavoris() {
   toutesLesMissions.forEach(function(missionCard, index) {
     const boutonFavori = document.createElement('button');
     boutonFavori.className = 'bouton-favori';
-    boutonFavori.textContent = '⭐ Ajouter aux favoris';
+    boutonFavori.textContent = 'Ajouter aux favoris';
     boutonFavori.style.padding = '10px 20px';
     boutonFavori.style.backgroundColor = '#fff';
     boutonFavori.style.color = '#000';
