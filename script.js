@@ -58,8 +58,6 @@ let missions = [
     image: "images/bepicolombo.jpg"
   }
 ];
-
-// Liste des favoris (stockage en mémoire)
 let favoris = [];
 
 // ==========================================
