@@ -479,7 +479,7 @@ function creerElementMission(mission) {
               border-radius: 5px;
               cursor: pointer;
               font-weight: 600;
-            ">✏️ Modifier</button>
+            ">Modifier</button>
             <button class="btn-supprimer" data-id="${mission.id}" style="
               padding: 10px 20px;
               background-color: #f44336;
@@ -488,7 +488,7 @@ function creerElementMission(mission) {
               border-radius: 5px;
               cursor: pointer;
               font-weight: 600;
-            ">🗑️ Supprimer</button>
+            ">Supprimer</button>
           `
               : ""
           }
@@ -814,7 +814,7 @@ function afficherNotification(message) {
 // INITIALISATION
 // ==========================================
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🚀 Space Odyssey JavaScript chargé!");
+  console.log("Space Odyssey JavaScript chargé!");
 
   // Ajouter les styles d'animation
   ajouterStylesAnimations();
