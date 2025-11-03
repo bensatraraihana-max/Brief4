@@ -57,7 +57,8 @@ let missions = [
     image: "images/bepicolombo.jpg",
   },
 ];
-
+let favoris = [];
+// Fonction pour afficher un message d'erreur
 function afficherErreur(champId, messageErreur) {
   const champ = document.getElementById(champId);
   if (!champ) return; // sécurité
@@ -82,7 +83,6 @@ function afficherErreur(champId, messageErreur) {
   champ.style.borderBottomColor = "red";
 }
 
-let favoris = [];
 //Validation de formulaire
 function validerFormulaireContact() {
   const formulaire = document.querySelector(".contact-main-form");
@@ -151,7 +151,7 @@ function validerFormulaireContact() {
 
   formulaire.addEventListener("submit", validation);
 }
-// Fonction pour afficher un message d'erreur
+
 
 // Fonction pour supprimer tous les messages d'erreur
 function supprimerMessagesErreur() {
