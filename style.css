@@ -2015,3 +2015,348 @@
     gap: 15px;
   }
 }*/
+/* ==========================================
+   STYLES ADDITIONNELS POUR LES MISSIONS
+   ========================================== */
+
+/* Conteneur des missions dynamiques */
+#conteneur-missions {
+  min-height: 300px;
+}
+
+/* Cartes de missions améliorées */
+.mission-dynamique {
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.mission-dynamique:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.mission-dynamique .mission-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mission-dynamique .mission-header .dot {
+  width: 12px;
+  height: 12px;
+  background-color: #000;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mission-dynamique .mission-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+}
+
+.mission-dynamique .mission-card {
+  background-color: #fff;
+  color: #000000;
+  border-radius: 12px;
+  padding: 25px;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mission-dynamique .mission-text {
+  flex: 1;
+  color: white;
+  line-height: 1.7;
+}
+
+.mission-dynamique .mission-text p {
+  margin-bottom: 12px;
+  color:white;
+}
+
+.mission-dynamique .mission-text strong {
+  color:blueviolet;
+  font-weight: 600;
+}
+
+.mission-dynamique .mission-image {
+  flex-shrink: 0;
+  width: 300px;
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mission-dynamique .mission-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.mission-dynamique .mission-image:hover img {
+  transform: scale(1.05);
+}
+
+/* Boutons de mission */
+.mission-dynamique button {
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.mission-dynamique button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mission-dynamique button:active {
+  transform: translateY(0);
+}
+
+.btn-favori:hover {
+  background-color: #ffd700 !important;
+  border-color: #ffd700 !important;
+}
+
+.btn-modifier:hover {
+  background-color: #1976d2 !important;
+}
+
+.btn-supprimer:hover {
+  background-color: #d32f2f !important;
+}
+
+/* Messages d'erreur améliorés */
+.message-erreur {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background-color: #ffebee;
+  border-left: 3px solid #ff4444;
+  border-radius: 4px;
+}
+
+/* Formulaire de contact amélioré */
+.contact-field-group input.valide {
+  border-bottom-color: #4caf50 !important;
+}
+
+.contact-field-group input.invalide {
+  border-bottom-color: #ff4444 !important;
+}
+
+/* Barre de recherche améliorée */
+#recherche-missions {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 45px;
+}
+
+/* Onglets de navigation */
+[data-onglet] {
+  position: relative;
+  overflow: hidden;
+}
+
+[data-onglet]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #ffd700;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+[data-onglet]:hover::after {
+  transform: scaleX(1);
+}
+
+/* Modal amélioré */
+#modal-mission {
+  backdrop-filter: blur(5px);
+}
+
+#modal-mission form input,
+#modal-mission form textarea {
+  transition: all 0.3s ease;
+}
+
+#modal-mission form input:focus,
+#modal-mission form textarea:focus {
+  border-color: #000 !important;
+  transform: scale(1.01);
+}
+
+/* Notifications */
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+/* État vide */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #999;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #666;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #999;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .mission-dynamique .mission-card {
+    flex-direction: column;
+  }
+
+  .mission-dynamique .mission-image {
+    width: 100%;
+    height: 300px;
+  }
+
+  .mission-dynamique .mission-text {
+    width: 100%;
+  }
+
+  #modal-mission > div {
+    width: 95%;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mission-dynamique .mission-header h2 {
+    font-size: 20px;
+  }
+
+  .mission-dynamique .mission-card {
+    padding: 20px;
+  }
+
+  .mission-dynamique button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  [data-onglet] {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* Amélioration du footer pour cohérence */
+.footer-content form input:focus {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
+}
+
+/* Scrollbar personnalisée */
+#modal-mission > div::-webkit-scrollbar {
+  width: 8px;
+}
+
+#modal-mission > div::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+#modal-mission > div::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+#modal-mission > div::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Loading state */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Amélioration des boutons globaux */
+button {
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0.3px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Focus visible pour accessibilité */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #ffd700;
+  outline-offset: 2px;
+}
+
+/* Badge pour compteur de favoris */
+.badge-favoris {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background-color: #ffd700;
+  color: #000;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+}
