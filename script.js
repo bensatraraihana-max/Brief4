@@ -1002,3 +1002,192 @@ window.SpaceOdyssey = {
   supprimerMission,
   toggleFavori,
 };
+//pour header
+function initialiserModaleFavoris() {
+  const btnOuvrir = document.getElementById('btn-ouvrir-favoris');
+  const btnFermer = document.getElementById('btn-fermer-favoris');
+  const overlay = document.getElementById('modal-favoris-overlay');
+  const modal = document.getElementById('modal-favoris');
+  const btnVider = document.getElementById('btn-vider-favoris');
+  
+  if (!btnOuvrir || !modal) return;
+  
+  // Ouvrir la modale
+  btnOuvrir.addEventListener('click', function() {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Bloquer le scroll
+    afficherFavorisModalе();
+  });
+  
+  // Fermer la modale
+  function fermerModale() {
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // Réactiver le scroll
+  }
+  
+  if (btnFermer) {
+    btnFermer.addEventListener('click', fermerModale);
+  }
+  
+  if (overlay) {
+    overlay.addEventListener('click', fermerModale);
+  }
+  
+  // Fermer avec Échap
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      fermerModale();
+    }
+  });
+  
+  // Vider tous les favoris
+  if (btnVider) {
+    btnVider.addEventListener('click', function() {
+      if (confirm('⚠️ Êtes-vous sûr de vouloir supprimer tous vos favoris ?')) {
+        favoris = [];
+        sauvegarderFavoris();
+        mettreAJourBadgeFavoris();
+        afficherFavorisModale();
+        afficherMissionsFromData(); // Rafraîchir la page missions
+        afficherNotification('🗑️ Tous les favoris ont été supprimés');
+      }
+    });
+  }
+}
+
+// Afficher les favoris dans la modale
+function afficherFavorisModale() {
+  const conteneur = document.getElementById('modal-favoris-body');
+  const emptyState = document.getElementById('favoris-empty');
+  const totalCount = document.getElementById('favoris-total-count');
+  
+  if (!conteneur) return;
+  
+  // Mettre à jour le compteur
+  if (totalCount) {
+    totalCount.textContent = favoris.length;
+  }
+  
+  // Si aucun favori
+  if (favoris.length === 0) {
+    if (emptyState) {
+      emptyState.style.display = 'block';
+    }
+    // Cacher toutes les cartes existantes
+    conteneur.querySelectorAll('.carte-favori').forEach(carte => carte.remove());
+    return;
+  }
+  
+  // Cacher l'état vide
+  if (emptyState) {
+    emptyState.style.display = 'none';
+  }
+  
+  // Supprimer les anciennes cartes
+  conteneur.querySelectorAll('.carte-favori').forEach(carte => carte.remove());
+  
+  // Afficher les cartes favoris
+  favoris.forEach(missionId => {
+    const mission = missions.find(m => m.id === missionId);
+    if (!mission) return;
+    
+    const carte = creerCarteFavori(mission);
+    conteneur.appendChild(carte);
+  });
+}
+
+// Créer une carte favori
+function creerCarteFavori(mission) {
+  const carte = document.createElement('div');
+  carte.className = 'carte-favori';
+  carte.dataset.missionId = mission.id;
+  
+  carte.innerHTML = `
+    <div class="carte-favori-image">
+      <img src="${mission.image}" alt="${mission.name}" onerror="this.src='images/default.png'">
+    </div>
+    <div class="carte-favori-content">
+      <h3 class="carte-favori-titre">
+        <span>⭐</span>
+        ${mission.name}
+      </h3>
+      <div class="carte-favori-info">
+        <span><strong>Agence:</strong> ${mission.agency}</span>
+        <span><strong>Date:</strong> ${new Date(mission.launchDate).toLocaleDateString('fr-FR')}</span>
+      </div>
+      <p class="carte-favori-description">${mission.description}</p>
+      <div class="carte-favori-actions">
+        <button class="btn-retirer-favori" data-id="${mission.id}">
+          Retirer
+        </button>
+        <button class="btn-voir-details" data-id="${mission.id}">
+          Voir détails
+        </button>
+      </div>
+    </div>
+  `;
+  
+  // Événement retirer
+  const btnRetirer = carte.querySelector('.btn-retirer-favori');
+  btnRetirer.addEventListener('click', function() {
+    carte.classList.add('removing');
+    setTimeout(() => {
+      toggleFavori(mission.id);
+      afficherFavorisModale();
+    }, 400);
+  });
+  
+  // Événement voir détails
+  const btnVoir = carte.querySelector('.btn-voir-details');
+  btnVoir.addEventListener('click', function() {
+    // Fermer la modale
+    document.getElementById('modal-favoris').classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Scroller vers la mission sur la page
+    if (window.location.pathname.includes('missions.html')) {
+      const missionElement = document.querySelector(`[data-mission-id="${mission.id}"]`);
+      if (missionElement) {
+        missionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        missionElement.style.animation = 'pulse 1s ease';
+      }
+    } else {
+      // Rediriger vers la page missions
+      window.location.href = `missions.html?mission=${mission.id}`;
+    }
+  });
+  
+  return carte;
+}
+
+// Mettre à jour le badge de compteur
+function mettreAJourBadgeFavoris() {
+  const badge = document.getElementById('favoris-count');
+  if (!badge) return;
+  
+  if (favoris.length > 0) {
+    badge.textContent = favoris.length;
+    badge.style.display = 'block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// Mettre à jour toggleFavori pour inclure le badge
+const originalToggleFavori = toggleFavori;
+toggleFavori = function(missionId) {
+  originalToggleFavori(missionId);
+  mettreAJourBadgeFavoris();
+  
+  // Si la modale est ouverte, la rafraîchir
+  const modal = document.getElementById('modal-favoris');
+  if (modal && modal.classList.contains('active')) {
+    afficherFavorisModale();
+  }
+};
+
+// Initialiser au chargement
+document.addEventListener('DOMContentLoaded', function() {
+  initialiserModaleFavoris();
+  mettreAJourBadgeFavoris();
+});
