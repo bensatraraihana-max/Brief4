@@ -698,21 +698,15 @@ function creerElementMission(mission) {
             cursor: pointer;
             font-weight: 600;
           ">Modifier</button>
-          ${
-            mission.id > 10
-              ? `
-            <button class="btn-supprimer" data-id="${mission.id}" style="
-              padding: 10px 20px;
-              background-color: #f44336;
-              color: white;
-              border: none;
-              border-radius: 5px;
-              cursor: pointer;
-              font-weight: 600;
-            ">Supprimer</button>
-          `
-              : ""
-          }
+          <button class="btn-supprimer" data-id="${mission.id}" style="
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+">Supprimer</button>
         </div>
       </div>
       <div class="mission-image">
@@ -959,7 +953,7 @@ function afficherFormulaireMission(mission) {
     const fichier = e.target.files[0];
     if (fichier) {
       if (fichier.size > 5 * 1024 * 1024) {
-        alert("⚠️ L'image est trop volumineuse. Maximum 5MB.");
+        alert("L'image est trop volumineuse. Maximum 5MB.");
         inputImage.value = "";
         return;
       }
