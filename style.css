@@ -2361,3 +2361,636 @@ textarea:focus-visible {
   font-weight: 700;
   margin-left: 8px;
 }
+/* ==========================================
+   MODALE DES FAVORIS
+   ========================================== */
+
+/* Bouton d'ouverture des favoris dans le header */
+#btn-ouvrir-favoris {
+  position: relative;
+  background: transparent;
+  border: 2px solid #ffd700;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#btn-ouvrir-favoris:hover {
+  background-color: #ffd700;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* Badge de compteur */
+#favoris-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+/* Overlay de la modale */
+#modal-favoris-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
+}
+
+/* Conteneur principal de la modale */
+#modal-favoris {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+#modal-favoris.active {
+  display: flex;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Contenu de la modale */
+#modal-favoris-content {
+  background-color: #fff;
+  border-radius: 20px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: slideUpIn 0.4s ease-out;
+}
+
+@keyframes slideUpIn {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* En-tête de la modale */
+#modal-favoris-header {
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  color: white;
+  padding: 25px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid #ffd700;
+}
+
+#modal-favoris-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+#favoris-total-count {
+  background-color: #ffd700;
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Boutons d'action dans le header */
+.modal-favoris-actions {
+  display: flex;
+  gap: 10px;
+}
+
+#btn-vider-favoris {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+#btn-vider-favoris:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+}
+
+#btn-fermer-favoris {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+#btn-fermer-favoris:hover {
+  background-color: white;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* Corps de la modale */
+#modal-favoris-body {
+  padding: 30px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: #f5f5f5;
+}
+
+/* État vide */
+#favoris-empty {
+  text-align: center;
+  padding: 80px 20px;
+  display: none;
+}
+
+#favoris-empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.3;
+}
+
+#favoris-empty h3 {
+  color: #666;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+#favoris-empty p {
+  color: #999;
+  font-size: 16px;
+}
+
+/* Cartes de favoris */
+.carte-favori {
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 20px;
+  transition: all 0.3s;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.carte-favori:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.carte-favori.removing {
+  animation: slideOut 0.4s ease-in;
+}
+
+/* Image de la carte favori */
+.carte-favori-image {
+  flex-shrink: 0;
+  width: 180px;
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+
+.carte-favori-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.carte-favori:hover .carte-favori-image img {
+  transform: scale(1.05);
+}
+
+/* Contenu de la carte favori */
+.carte-favori-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.carte-favori-titre {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carte-favori-titre span {
+  color: #ffd700;
+  font-size: 18px;
+}
+
+/* Informations de la carte */
+.carte-favori-info {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #666;
+}
+
+.carte-favori-info strong {
+  color: #000;
+}
+
+/* Description */
+.carte-favori-description {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Actions de la carte */
+.carte-favori-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.btn-retirer-favori,
+.btn-voir-details {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.btn-retirer-favori {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-retirer-favori:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+}
+
+.btn-voir-details {
+  background-color: #2196f3;
+  color: white;
+}
+
+.btn-voir-details:hover {
+  background-color: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+/* Scrollbar personnalisée pour la modale */
+#modal-favoris-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+#modal-favoris-body::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+#modal-favoris-body::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 10px;
+}
+
+#modal-favoris-body::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN POUR LA MODALE
+   ========================================== */
+
+@media (max-width: 768px) {
+  #modal-favoris-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  #modal-favoris-header {
+    padding: 20px;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  #modal-favoris-header h2 {
+    font-size: 22px;
+  }
+
+  .modal-favoris-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  #modal-favoris-body {
+    padding: 20px;
+  }
+
+  .carte-favori {
+    flex-direction: column;
+  }
+
+  .carte-favori-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .carte-favori-actions {
+    flex-direction: column;
+  }
+
+  .btn-retirer-favori,
+  .btn-voir-details {
+    width: 100%;
+  }
+
+  #favoris-empty {
+    padding: 40px 20px;
+  }
+
+  #favoris-empty-icon {
+    font-size: 60px;
+  }
+
+  #favoris-empty h3 {
+    font-size: 20px;
+  }
+
+  #favoris-empty p {
+    font-size: 14px;
+  }
+}
+
+/* ==========================================
+   AMÉLIORATIONS DES STYLES EXISTANTS
+   ========================================== */
+
+/* Amélioration du badge de compteur dans le header */
+.badge-favoris {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Amélioration des inputs du formulaire */
+#form-mission input,
+#form-mission textarea,
+#form-mission select {
+  background-color: #fff;
+  color: #000 !important;
+}
+
+#form-mission input::placeholder,
+#form-mission textarea::placeholder {
+  color: #999 !important;
+}
+
+#form-mission input:focus,
+#form-mission textarea:focus,
+#form-mission select:focus {
+  border-color: #000 !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Message de chargement d'image */
+.image-upload-message {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  font-size: 12px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Prévisualisation d'image */
+.image-preview {
+  margin-top: 15px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 200px;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Amélioration de l'affichage des missions avec images */
+.mission-dynamique .mission-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.mission-dynamique .mission-image::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.mission-dynamique:hover .mission-image::after {
+  opacity: 1;
+}
+/* --- MODALE FAVORIS CLAIRE ET CENTRÉE --- */
+#modal-favoris {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
+#modal-favoris.active {
+  display: flex;
+}
+#modal-favoris-content {
+  background: #ffffff;
+  width: 80%;
+  max-width: 800px;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  max-height: 90%;
+  color: #000;
+}
+#modal-favoris-header h2 {
+  color: #000;
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.carte-favori {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* --- LISTES DE FORMULAIRES (sélections) --- */
+select {
+  color: #000 !important;
+  background-color: #fff;
+}
+option {
+  color: #000 !important;
+}
+
+/* --- FORMULAIRE DE MODIFICATION --- */
+.form-edit-mission {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.form-edit-mission input,
+.form-edit-mission textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #000;
+}
+.form-edit-mission button {
+  padding: 8px 14px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+/* --- RENDRE LA FENÊTRE DES FAVORIS CLAIRE ET NON SOMBRE --- */
+#modal-favoris {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8) !important; /* clair et visible */
+  z-index: 9999;
+}
+
+#modal-favoris.active {
+  display: flex;
+}
+
+#modal-favoris-content {
+  background: #ffffff;
+  color: #000;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+  width: 80%;
+  max-width: 800px;
+  max-height: 85%;
+  overflow-y: auto;
+}
+
+#modal-favoris-body h3,
+#modal-favoris-body p {
+  color: #000;
+}
+
+#favoris-empty h3,
+#favoris-empty p {
+  color: #333 !important;
+}

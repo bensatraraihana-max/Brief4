@@ -8,6 +8,7 @@ let missions = [
     agency: "NASA",
     objective: "Premier alunissage habité",
     launchDate: "1969-07-16",
+    typeMission: "Exploration lunaire",
     description:
       "The Apollo 11 mission, led by NASA, made history by allowing humankind to walk on the Moon for the very first time. Launched on July 16, 1969, it marked the beginning of a new era in space exploration and human achievement.",
     image: "images/1.png",
@@ -18,6 +19,7 @@ let missions = [
     agency: "NASA",
     objective: "Exploration du cratère Gale sur Mars",
     launchDate: "2011-11-26",
+    typeMission: "Exploration planétaire",
     description:
       "The Curiosity Rover, operated by NASA, was designed to explore the Martian surface, study its geology and climate, and search for signs of past life. It was launched on November 26, 2011, and continues to send valuable scientific data from the Red Planet.",
     image: "images/2.png",
@@ -28,6 +30,7 @@ let missions = [
     agency: "NASA/ESA/CSA",
     objective: "Observation de l'univers primitif",
     launchDate: "2021-12-25",
+    typeMission: "Observation spatiale",
     description:
       "A collaboration between NASA, ESA, and CSA, the James Webb Space Telescope was launched on December 25, 2021. Its goal is to observe distant galaxies, study the formation of stars and planets, and uncover the origins of our universe.",
     image: "images/3.png",
@@ -38,6 +41,7 @@ let missions = [
     agency: "NASA",
     objective: "Test du système de lancement SLS et d'Orion",
     launchDate: "2022-11-16",
+    typeMission: "Exploration lunaire",
     description:
       "The Artemis I mission, developed by NASA, aimed to test the SLS rocket and the Orion spacecraft around the Moon. Launched on November 16, 2022, it represents a key step toward the return of humans to the lunar surface.",
     image: "images/4.png",
@@ -48,8 +52,9 @@ let missions = [
     agency: "NASA/ESA",
     objective: "Observation de l'univers",
     launchDate: "1990-04-24",
+    typeMission: "Observation spatiale",
     description:
-      "Launched on April 24, 1990, the Hubble Space Telescope — a joint project between NASA and ESA — has captured breathtaking images of our universe. For more than three decades, it has revealed distant galaxies, nebulae, and the vast beauty of outer space.",
+      "Launched on April 24, 1990, the Hubble Space Telescope – a joint project between NASA and ESA – has captured breathtaking images of our universe. For more than three decades, it has revealed distant galaxies, nebulae, and the vast beauty of outer space.",
     image: "images/5.png",
   },
   {
@@ -58,6 +63,7 @@ let missions = [
     agency: "NASA",
     objective: "Exploration du système solaire externe",
     launchDate: "1977-09-05",
+    typeMission: "Exploration spatiale",
     description:
       "Launched by NASA on September 5, 1977, Voyager 1 explored Jupiter and Saturn before continuing its journey into interstellar space. It remains the most distant human-made object, still transmitting valuable data to Earth.",
     image: "images/6.png",
@@ -68,6 +74,7 @@ let missions = [
     agency: "Soviet Union",
     objective: "Premier satellite artificiel",
     launchDate: "1957-10-04",
+    typeMission: "Satellite",
     description:
       "On October 4, 1957, the Soviet Union launched Sputnik 1, the first artificial satellite ever placed in orbit around Earth. This historic event marked the dawn of the space age and sparked the space race between world powers.",
     image: "images/7.png",
@@ -78,6 +85,7 @@ let missions = [
     agency: "NASA/Roscosmos/ESA/JAXA/CSA",
     objective: "Station spatiale habitée",
     launchDate: "1998-11-20",
+    typeMission: "Station spatiale",
     description:
       "A collaboration between NASA, Roscosmos, ESA, JAXA, and CSA, the International Space Station (ISS) was launched on November 20, 1998. It serves as an orbiting laboratory where astronauts conduct experiments and research in a unique microgravity environment.",
     image: "images/8.png",
@@ -88,6 +96,7 @@ let missions = [
     agency: "ESA",
     objective: "Étude de Mars",
     launchDate: "2003-06-02",
+    typeMission: "Exploration planétaire",
     description:
       "Launched by the European Space Agency (ESA) on June 2, 2003, Mars Express was designed to study the Martian atmosphere and surface composition. It provided groundbreaking discoveries, including the detection of water ice beneath the surface.",
     image: "images/9.png",
@@ -98,6 +107,7 @@ let missions = [
     agency: "ISRO",
     objective: "Mission lunaire indienne",
     launchDate: "2023-07-14",
+    typeMission: "Exploration lunaire",
     description:
       "The Chandrayaan-3 mission by ISRO was designed to explore the lunar surface. It successfully landed on the Moon's south pole region, making India the fourth country to achieve a soft landing on the Moon.",
     image: "images/10.png",
@@ -105,7 +115,208 @@ let missions = [
 ];
 
 let favoris = [];
-let ongletActuel = "toutes"; // 'toutes', 'favoris', 'mes-missions'
+let ongletActuel = "toutes";
+
+// ==========================================
+// GESTION DES FAVORIS
+// ==========================================
+function chargerFavoris() {
+  const favorisStockes = localStorage.getItem("missionsFavoris");
+  if (favorisStockes) {
+    favoris = JSON.parse(favorisStockes);
+  }
+  mettreAJourBadgeFavoris();
+}
+
+function sauvegarderFavoris() {
+  localStorage.setItem("missionsFavoris", JSON.stringify(favoris));
+  mettreAJourBadgeFavoris();
+}
+
+function mettreAJourBadgeFavoris() {
+  const badge = document.getElementById("favoris-count");
+  if (badge) {
+    if (favoris.length > 0) {
+      badge.textContent = favoris.length;
+      badge.style.display = "flex";
+    } else {
+      badge.style.display = "none";
+    }
+  }
+}
+
+function toggleFavori(missionId) {
+  const index = favoris.indexOf(missionId);
+
+  if (index === -1) {
+    favoris.push(missionId);
+    afficherNotification("⭐ Mission ajoutée aux favoris!");
+  } else {
+    favoris.splice(index, 1);
+    afficherNotification("Mission retirée des favoris");
+  }
+
+  sauvegarderFavoris();
+  afficherMissionsFromData();
+
+  // Rafraîchir la modale si elle est ouverte
+  const modal = document.getElementById("modal-favoris");
+  if (modal && modal.classList.contains("active")) {
+    afficherFavorisModale();
+  }
+}
+
+// ==========================================
+// MODALE DES FAVORIS
+// ==========================================
+function initialiserModaleFavoris() {
+  const btnOuvrir = document.getElementById("btn-ouvrir-favoris");
+  const btnFermer = document.getElementById("btn-fermer-favoris");
+  const overlay = document.getElementById("modal-favoris-overlay");
+  const modal = document.getElementById("modal-favoris");
+  const btnVider = document.getElementById("btn-vider-favoris");
+
+  if (!btnOuvrir || !modal) return;
+
+  btnOuvrir.addEventListener("click", function () {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    afficherFavorisModale();
+  });
+
+  function fermerModale() {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  if (btnFermer) {
+    btnFermer.addEventListener("click", fermerModale);
+  }
+
+  if (overlay) {
+    overlay.addEventListener("click", fermerModale);
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && modal.classList.contains("active")) {
+      fermerModale();
+    }
+  });
+
+  if (btnVider) {
+    btnVider.addEventListener("click", function () {
+      if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer tous vos favoris ?")) {
+        favoris = [];
+        sauvegarderFavoris();
+        afficherFavorisModale();
+        afficherMissionsFromData();
+        afficherNotification("Tous les favoris ont été supprimés");
+      }
+    });
+  }
+}
+
+function afficherFavorisModale() {
+  const conteneur = document.getElementById("modal-favoris-body");
+  const emptyState = document.getElementById("favoris-empty");
+  const totalCount = document.getElementById("favoris-total-count");
+
+  if (!conteneur) return;
+
+  if (totalCount) {
+    totalCount.textContent = favoris.length;
+  }
+
+  if (favoris.length === 0) {
+    if (emptyState) {
+      emptyState.style.display = "block";
+    }
+    conteneur
+      .querySelectorAll(".carte-favori")
+      .forEach((carte) => carte.remove());
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.style.display = "none";
+  }
+
+  conteneur
+    .querySelectorAll(".carte-favori")
+    .forEach((carte) => carte.remove());
+
+  favoris.forEach((missionId) => {
+    const mission = missions.find((m) => m.id === missionId);
+    if (!mission) return;
+
+    const carte = creerCarteFavori(mission);
+    conteneur.appendChild(carte);
+  });
+}
+
+function creerCarteFavori(mission) {
+  const carte = document.createElement("div");
+  carte.className = "carte-favori";
+  carte.dataset.missionId = mission.id;
+
+  carte.innerHTML = `
+    <div class="carte-favori-image">
+      <img src="${mission.image}" alt="${
+    mission.name
+  }" onerror="this.src='images/default.png'">
+    </div>
+    <div class="carte-favori-content">
+      <h3 class="carte-favori-titre">
+        <span>⭐</span>
+        ${mission.name}
+      </h3>
+      <div class="carte-favori-info">
+        <span><strong>Agence:</strong> ${mission.agency}</span>
+        <span><strong>Date:</strong> ${new Date(
+          mission.launchDate
+        ).toLocaleDateString("fr-FR")}</span>
+      </div>
+      <p class="carte-favori-description">${mission.description}</p>
+      <div class="carte-favori-actions">
+        <button class="btn-retirer-favori" data-id="${mission.id}">
+          Retirer
+        </button>
+        <button class="btn-voir-details" data-id="${mission.id}">
+          Voir détails
+        </button>
+      </div>
+    </div>
+  `;
+
+  const btnRetirer = carte.querySelector(".btn-retirer-favori");
+  btnRetirer.addEventListener("click", function () {
+    carte.classList.add("removing");
+    setTimeout(() => {
+      toggleFavori(mission.id);
+      afficherFavorisModale();
+    }, 400);
+  });
+
+  const btnVoir = carte.querySelector(".btn-voir-details");
+  btnVoir.addEventListener("click", function () {
+    document.getElementById("modal-favoris").classList.remove("active");
+    document.body.style.overflow = "";
+
+    if (window.location.pathname.includes("missions.html")) {
+      const missionElement = document.querySelector(
+        `[data-mission-id="${mission.id}"]`
+      );
+      if (missionElement) {
+        missionElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        missionElement.style.animation = "pulse 1s ease";
+      }
+    } else {
+      window.location.href = `missions.html?mission=${mission.id}`;
+    }
+  });
+
+  return carte;
+}
 
 // ==========================================
 // VALIDATION DU FORMULAIRE DE CONTACT
@@ -126,7 +337,6 @@ function validerFormulaireContact() {
     let formulaireValide = true;
     supprimerMessagesErreur();
 
-    // Validation du prénom
     const regexNom = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]{2,}$/;
     if (prenom === "" || !regexNom.test(prenom)) {
       afficherErreur(
@@ -136,7 +346,6 @@ function validerFormulaireContact() {
       formulaireValide = false;
     }
 
-    // Validation du nom
     if (nom === "" || !regexNom.test(nom)) {
       afficherErreur(
         "lastName",
@@ -145,7 +354,6 @@ function validerFormulaireContact() {
       formulaireValide = false;
     }
 
-    // Validation de l'email
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email === "") {
       afficherErreur("email", "L'email est obligatoire");
@@ -158,7 +366,6 @@ function validerFormulaireContact() {
       formulaireValide = false;
     }
 
-    // Validation du téléphone
     if (telephone !== "") {
       const regexTel = /^[0-9]{10}$/;
       if (!regexTel.test(telephone.replace(/\s/g, ""))) {
@@ -170,7 +377,6 @@ function validerFormulaireContact() {
       }
     }
 
-    // Validation du message
     if (message === "") {
       afficherErreur("message", "Le message est obligatoire");
       formulaireValide = false;
@@ -182,9 +388,7 @@ function validerFormulaireContact() {
       formulaireValide = false;
     }
 
-    // Résultat
     if (formulaireValide) {
-      // Sauvegarder les données (simulation)
       console.log("Formulaire valide:", {
         prenom,
         nom,
@@ -192,11 +396,8 @@ function validerFormulaireContact() {
         telephone,
         message,
       });
-
-      // Redirection vers la page de confirmation
       window.location.href = "message.html";
     } else {
-      // Afficher une alerte générale
       const premiereErreur = document.querySelector(".message-erreur");
       if (premiereErreur) {
         premiereErreur.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -209,11 +410,9 @@ function afficherErreur(champId, messageErreur) {
   const champ = document.getElementById(champId);
   if (!champ) return;
 
-  // Supprimer ancien message
   const ancienMessage = champ.parentElement.querySelector(".message-erreur");
   if (ancienMessage) ancienMessage.remove();
 
-  // Créer le message d'erreur
   const messageErreurElement = document.createElement("span");
   messageErreurElement.className = "message-erreur";
   messageErreurElement.style.color = "#ff4444";
@@ -254,7 +453,6 @@ function creerInterfaceMissions() {
   const premiereMission = document.querySelector(".mission");
   if (!premiereMission) return;
 
-  // Créer le conteneur principal
   const conteneurPrincipal = document.createElement("div");
   conteneurPrincipal.style.maxWidth = "1200px";
   conteneurPrincipal.style.margin = "30px auto";
@@ -265,7 +463,7 @@ function creerInterfaceMissions() {
   barreRecherche.type = "text";
   barreRecherche.id = "recherche-missions";
   barreRecherche.placeholder =
-    "Rechercher une mission (nom, agence, objectif, date...)";
+    "Rechercher par nom, agence, objectif ou date...";
   barreRecherche.style.cssText = `
     width: 100%;
     padding: 15px 20px;
@@ -274,6 +472,7 @@ function creerInterfaceMissions() {
     border-radius: 8px;
     margin-bottom: 20px;
     transition: border-color 0.3s;
+    color: #000;
   `;
   barreRecherche.addEventListener(
     "focus",
@@ -285,7 +484,7 @@ function creerInterfaceMissions() {
   );
   barreRecherche.addEventListener("input", filtrerMissions);
 
-  // Conteneur des filtres et onglets
+  // Conteneur des filtres
   const conteneurControls = document.createElement("div");
   conteneurControls.style.cssText = `
     display: flex;
@@ -299,7 +498,7 @@ function creerInterfaceMissions() {
   const onglets = ["toutes", "favoris", "mes-missions"];
   const labelOnglets = {
     toutes: "Toutes les missions",
-    favoris: " Favoris",
+    favoris: "⭐ Favoris",
     "mes-missions": "Mes missions",
   };
 
@@ -321,24 +520,8 @@ function creerInterfaceMissions() {
     conteneurControls.appendChild(bouton);
   });
 
-  // Filtre par agence
-  const selectAgence = document.createElement("select");
-  selectAgence.id = "filtre-agence";
-  selectAgence.style.cssText = `
-    padding: 10px 15px;
-    font-size: 14px;
-    border: 2px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
-  `;
-  selectAgence.innerHTML = `
-    <option value="" style=" color: black">Toutes les agences</option>
-    <option value="NASA" style=" color: black">NASA</option>
-    <option value="ESA" style=" color: black">ESA</option>
-    <option value="ISRO" style=" color: black">ISRO</option>
-    <option value="Soviet Union " style=" color: black" >Soviet Union</option>
-  `;
-  selectAgence.addEventListener("change", filtrerMissions);
+  // Filtres multiples
+  creerFiltresMultiples(conteneurControls);
 
   // Bouton ajouter
   const boutonAjouter = document.createElement("button");
@@ -357,7 +540,7 @@ function creerInterfaceMissions() {
 
   // Bouton reset
   const boutonReset = document.createElement("button");
-  boutonReset.textContent = " Réinitialiser";
+  boutonReset.textContent = "🔄 Réinitialiser";
   boutonReset.style.cssText = `
     padding: 10px 20px;
     background-color: #666;
@@ -368,11 +551,12 @@ function creerInterfaceMissions() {
   `;
   boutonReset.addEventListener("click", () => {
     barreRecherche.value = "";
-    selectAgence.value = "";
+    document.getElementById("filtre-agence").value = "";
+    document.getElementById("filtre-annee").value = "";
+    document.getElementById("filtre-type").value = "";
     filtrerMissions();
   });
 
-  conteneurControls.appendChild(selectAgence);
   conteneurControls.appendChild(boutonReset);
   conteneurControls.appendChild(boutonAjouter);
 
@@ -394,10 +578,62 @@ function creerInterfaceMissions() {
     premiereMission
   );
 
-  // Cacher les missions statiques
   document
     .querySelectorAll(".mission")
     .forEach((m) => (m.style.display = "none"));
+}
+
+function creerFiltresMultiples(conteneur) {
+  // Filtre par agence
+  const selectAgence = document.createElement("select");
+  selectAgence.id = "filtre-agence";
+  selectAgence.style.cssText = `
+    padding: 10px 15px;
+    font-size: 14px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #000;
+  `;
+
+  const agencesUniques = [...new Set(missions.map((m) => m.agency))];
+  selectAgence.innerHTML = `<option value="">Toutes les agences</option>`;
+  agencesUniques.forEach((agence) => {
+    selectAgence.innerHTML += `<option value="${agence}">${agence}</option>`;
+  });
+  selectAgence.addEventListener("change", filtrerMissions);
+
+  // Filtre par année
+  const selectAnnee = document.createElement("select");
+  selectAnnee.id = "filtre-annee";
+  selectAnnee.style.cssText = selectAgence.style.cssText;
+
+  const anneesUniques = [
+    ...new Set(missions.map((m) => new Date(m.launchDate).getFullYear())),
+  ].sort((a, b) => b - a);
+  selectAnnee.innerHTML = `<option value="">Toutes les années</option>`;
+  anneesUniques.forEach((annee) => {
+    selectAnnee.innerHTML += `<option value="${annee}">${annee}</option>`;
+  });
+  selectAnnee.addEventListener("change", filtrerMissions);
+
+  // Filtre par type de mission
+  const selectType = document.createElement("select");
+  selectType.id = "filtre-type";
+  selectType.style.cssText = selectAgence.style.cssText;
+
+  const typesUniques = [
+    ...new Set(missions.map((m) => m.typeMission || "Non spécifié")),
+  ];
+  selectType.innerHTML = `<option value="">Tous les types</option>`;
+  typesUniques.forEach((type) => {
+    selectType.innerHTML += `<option value="${type}">${type}</option>`;
+  });
+  selectType.addEventListener("change", filtrerMissions);
+
+  conteneur.appendChild(selectAgence);
+  conteneur.appendChild(selectAnnee);
+  conteneur.appendChild(selectType);
 }
 
 function afficherMissionsFromData() {
@@ -413,7 +649,7 @@ function afficherMissionsFromData() {
   } else if (ongletActuel === "favoris") {
     missionsAfficher = missions.filter((m) => favoris.includes(m.id));
   } else if (ongletActuel === "mes-missions") {
-    missionsAfficher = missions.filter((m) => m.id > 10); // Missions ajoutées
+    missionsAfficher = missions.filter((m) => m.id > 10);
   }
 
   if (missionsAfficher.length === 0) {
@@ -441,6 +677,7 @@ function creerElementMission(mission) {
   section.dataset.date = mission.launchDate;
 
   const estFavori = favoris.includes(mission.id);
+  const peutModifier = mission.id > 10;
 
   section.innerHTML = `
     <div class="mission-header">
@@ -448,9 +685,10 @@ function creerElementMission(mission) {
       <h2>${mission.name}</h2>
     </div>
     <div class="mission-card">
-      <div class="mission-text" ">
+      <div class="mission-text">
         <p><strong>Agence:</strong> ${mission.agency}</p>
         <p><strong>Objectif:</strong> ${mission.objective}</p>
+        <p><strong>Type:</strong> ${mission.typeMission || "Non spécifié"}</p>
         <p><strong>Date de lancement:</strong> ${new Date(
           mission.launchDate
         ).toLocaleDateString("fr-FR")}</p>
@@ -468,18 +706,19 @@ function creerElementMission(mission) {
           ">
             ${estFavori ? "⭐ Retirer des favoris" : "☆ Ajouter aux favoris"}
           </button>
+          <button class="btn-modifier" data-id="${mission.id}" style="
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            ${!peutModifier ? "opacity: 0.5; cursor: not-allowed;" : ""}
+          " ${!peutModifier ? "disabled" : ""}>Modifier</button>
           ${
-            mission.id > 10
+            peutModifier
               ? `
-            <button class="btn-modifier" data-id="${mission.id}" style="
-              padding: 10px 20px;
-              background-color: #2196F3;
-              color: white;
-              border: none;
-              border-radius: 5px;
-              cursor: pointer;
-              font-weight: 600;
-            ">Modifier</button>
             <button class="btn-supprimer" data-id="${mission.id}" style="
               padding: 10px 20px;
               background-color: #f44336;
@@ -502,12 +741,11 @@ function creerElementMission(mission) {
     </div>
   `;
 
-  // Événements
   const btnFavori = section.querySelector(".btn-favori");
   btnFavori.addEventListener("click", () => toggleFavori(mission.id));
 
   const btnModifier = section.querySelector(".btn-modifier");
-  if (btnModifier) {
+  if (btnModifier && peutModifier) {
     btnModifier.addEventListener("click", () =>
       afficherFormulaireModification(mission.id)
     );
@@ -521,25 +759,9 @@ function creerElementMission(mission) {
   return section;
 }
 
-function toggleFavori(missionId) {
-  const index = favoris.indexOf(missionId);
-
-  if (index === -1) {
-    favoris.push(missionId);
-    afficherNotification("⭐ Mission ajoutée aux favoris!");
-  } else {
-    favoris.splice(index, 1);
-    afficherNotification("Mission retirée des favoris");
-  }
-
-  sauvegarderFavoris();
-  afficherMissionsFromData();
-}
-
 function changerOnglet(nouvelOnglet) {
   ongletActuel = nouvelOnglet;
 
-  // Mettre à jour les styles des boutons
   document.querySelectorAll("[data-onglet]").forEach((btn) => {
     const estActif = btn.dataset.onglet === nouvelOnglet;
     btn.style.backgroundColor = estActif ? "#000" : "#fff";
@@ -554,6 +776,8 @@ function filtrerMissions() {
     document.getElementById("recherche-missions")?.value.toLowerCase() || "";
   const agence =
     document.getElementById("filtre-agence")?.value.toLowerCase() || "";
+  const annee = document.getElementById("filtre-annee")?.value || "";
+  const type = document.getElementById("filtre-type")?.value || "";
 
   const missionsDynamiques = document.querySelectorAll(".mission-dynamique");
 
@@ -562,6 +786,12 @@ function filtrerMissions() {
     const missionAgency = mission.dataset.agency || "";
     const objective = mission.dataset.objective || "";
     const date = mission.dataset.date || "";
+    const missionAnnee = new Date(date).getFullYear().toString();
+
+    const missionData = missions.find(
+      (m) => m.id === parseInt(mission.dataset.missionId)
+    );
+    const missionType = (missionData?.typeMission || "").toLowerCase();
 
     const correspondRecherche =
       !recherche ||
@@ -571,9 +801,16 @@ function filtrerMissions() {
       date.includes(recherche);
 
     const correspondAgence = !agence || missionAgency.includes(agence);
+    const correspondAnnee = !annee || missionAnnee === annee;
+    const correspondType = !type || missionType.includes(type.toLowerCase());
 
     mission.style.display =
-      correspondRecherche && correspondAgence ? "block" : "none";
+      correspondRecherche &&
+      correspondAgence &&
+      correspondAnnee &&
+      correspondType
+        ? "block"
+        : "none";
   });
 }
 
@@ -612,9 +849,9 @@ function afficherFormulaireMission(mission) {
     background-color: #fff;
     padding: 40px;
     border-radius: 15px;
-    max-width: 600px;
+    max-width: 700px;
     width: 90%;
-    max-height: 85vh;
+    max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 10px 50px rgba(0,0,0,0.5);
   `;
@@ -631,7 +868,7 @@ function afficherFormulaireMission(mission) {
         <input type="text" id="mission-nom" value="${
           mission?.name || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
       </div>
       
       <div style="margin-bottom: 20px;">
@@ -639,7 +876,7 @@ function afficherFormulaireMission(mission) {
         <input type="text" id="mission-agence" value="${
           mission?.agency || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
       </div>
       
       <div style="margin-bottom: 20px;">
@@ -647,7 +884,7 @@ function afficherFormulaireMission(mission) {
         <input type="date" id="mission-date" value="${
           mission?.launchDate || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
       </div>
       
       <div style="margin-bottom: 20px;">
@@ -655,15 +892,53 @@ function afficherFormulaireMission(mission) {
         <input type="text" id="mission-objectif" value="${
           mission?.objective || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; color: #000; margin-bottom: 8px; font-weight: 600;">Type de mission *</label>
+        <select id="mission-type" required 
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+          <option value="">Sélectionnez un type</option>
+          <option value="Exploration lunaire" ${
+            mission?.typeMission === "Exploration lunaire" ? "selected" : ""
+          }>Exploration lunaire</option>
+          <option value="Exploration planétaire" ${
+            mission?.typeMission === "Exploration planétaire" ? "selected" : ""
+          }>Exploration planétaire</option>
+          <option value="Observation spatiale" ${
+            mission?.typeMission === "Observation spatiale" ? "selected" : ""
+          }>Observation spatiale</option>
+          <option value="Exploration spatiale" ${
+            mission?.typeMission === "Exploration spatiale" ? "selected" : ""
+          }>Exploration spatiale</option>
+          <option value="Satellite" ${
+            mission?.typeMission === "Satellite" ? "selected" : ""
+          }>Satellite</option>
+          <option value="Station spatiale" ${
+            mission?.typeMission === "Station spatiale" ? "selected" : ""
+          }>Station spatiale</option>
+        </select>
       </div>
       
       <div style="margin-bottom: 25px;">
         <label style="display: block; color: #000; margin-bottom: 8px; font-weight: 600;">Description *</label>
         <textarea id="mission-description" required rows="5" 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical;">${
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical; color: #000;">${
             mission?.description || ""
           }</textarea>
+      </div>
+      
+      <div style="margin-bottom: 25px;">
+        <label style="display: block; color: #000; margin-bottom: 8px; font-weight: 600;">Image de la mission</label>
+        <input type="file" id="mission-image" accept="image/*" 
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+        <small style="color: #666; display: block; margin-top: 5px;">Formats acceptés: JPG, PNG, GIF (max 5MB)</small>
+        ${
+          mission?.image
+            ? `<img src="${mission.image}" alt="Image actuelle" style="width: 150px; margin-top: 10px; border-radius: 8px;">`
+            : ""
+        }
       </div>
       
       <div style="display: flex; gap: 15px;">
@@ -700,6 +975,27 @@ function afficherFormulaireMission(mission) {
     .getElementById("btn-annuler-mission")
     .addEventListener("click", () => modal.remove());
 
+  const inputImage = document.getElementById("mission-image");
+  let imageSelectionnee = mission?.image || "";
+
+  inputImage.addEventListener("change", function (e) {
+    const fichier = e.target.files[0];
+    if (fichier) {
+      if (fichier.size > 5 * 1024 * 1024) {
+        alert("⚠️ L'image est trop volumineuse. Maximum 5MB.");
+        inputImage.value = "";
+        return;
+      }
+
+      const lecteur = new FileReader();
+      lecteur.onload = function (event) {
+        imageSelectionnee = event.target.result;
+        afficherNotification("✓ Image chargée avec succès");
+      };
+      lecteur.readAsDataURL(fichier);
+    }
+  });
+
   document.getElementById("form-mission").addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -708,7 +1004,9 @@ function afficherFormulaireMission(mission) {
       agency: document.getElementById("mission-agence").value.trim(),
       launchDate: document.getElementById("mission-date").value,
       objective: document.getElementById("mission-objectif").value.trim(),
+      typeMission: document.getElementById("mission-type").value,
       description: document.getElementById("mission-description").value.trim(),
+      image: imageSelectionnee || "images/default.png",
     };
 
     if (mission) {
@@ -725,13 +1023,12 @@ function ajouterMission(donnees) {
   const nouvelleMission = {
     id: missions.length > 0 ? Math.max(...missions.map((m) => m.id)) + 1 : 1,
     ...donnees,
-    image: "images/default.png",
   };
 
   missions.push(nouvelleMission);
   afficherNotification("✓ Mission ajoutée avec succès!");
-  ongletActuel = "mes-missions";
-  changerOnglet("mes-missions");
+  ongletActuel = "toutes";
+  changerOnglet("toutes");
   afficherMissionsFromData();
 }
 
@@ -757,7 +1054,6 @@ function supprimerMission(id) {
   if (index !== -1) {
     missions.splice(index, 1);
 
-    // Retirer des favoris si nécessaire
     const favIndex = favoris.indexOf(id);
     if (favIndex !== -1) {
       favoris.splice(favIndex, 1);
@@ -767,19 +1063,6 @@ function supprimerMission(id) {
     afficherNotification("✓ Mission supprimée");
     afficherMissionsFromData();
   }
-}
-
-// ==========================================
-// GESTION DES FAVORIS (localStorage simulé)
-// ==========================================
-function chargerFavoris() {
-  // Simulation localStorage avec variable globale
-  favoris = [];
-}
-
-function sauvegarderFavoris() {
-  // Simulation localStorage
-  console.log("Favoris sauvegardés:", favoris);
 }
 
 // ==========================================
@@ -809,33 +1092,6 @@ function afficherNotification(message) {
     setTimeout(() => notification.remove(), 300);
   }, 3000);
 }
-
-// ==========================================
-// INITIALISATION
-// ==========================================
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("Space Odyssey JavaScript chargé!");
-
-  // Ajouter les styles d'animation
-  ajouterStylesAnimations();
-
-  // Validation formulaire de contact
-  validerFormulaireContact();
-
-  // Page missions
-  initialiserPageMissions();
-
-  // Bouton Done sur message.html
-  const boutonDone = document.querySelector(".bouton-fermer");
-  if (boutonDone) {
-    boutonDone.addEventListener("click", () => {
-      window.location.href = "index.html";
-    });
-  }
-
-  // Améliorer la validation en temps réel
-  ajouterValidationTempsReel();
-});
 
 // ==========================================
 // VALIDATION EN TEMPS RÉEL
@@ -873,7 +1129,6 @@ function ajouterValidationTempsReel() {
       const valeur = this.value.trim();
       const config = champsValidation[champId];
 
-      // Supprimer les anciens messages
       const ancienMessage = this.parentElement.querySelector(".message-erreur");
       if (ancienMessage) ancienMessage.remove();
 
@@ -894,7 +1149,6 @@ function ajouterValidationTempsReel() {
         }
       }
 
-      // Champ valide
       this.style.borderBottomColor = "#4CAF50";
       this.style.borderBottomWidth = "2px";
     });
@@ -949,16 +1203,25 @@ function ajouterStylesAnimations() {
       }
     }
     
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+      50% {
+        box-shadow: 0 8px 30px rgba(255,215,0,0.5);
+      }
+    }
+    
     .mission-dynamique {
       animation: fadeIn 0.5s ease-out;
     }
     
-    button:hover {
+    button:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     
-    button:active {
+    button:active:not(:disabled) {
       transform: translateY(0);
     }
     
@@ -970,30 +1233,36 @@ function ajouterStylesAnimations() {
     .message-erreur {
       animation: fadeIn 0.3s ease-out;
     }
+    
+    .removing {
+      animation: slideOut 0.4s ease-in;
+    }
   `;
 
   document.head.appendChild(style);
 }
 
 // ==========================================
-// FONCTIONS UTILITAIRES
+// INITIALISATION
 // ==========================================
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("fr-FR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("Space Odyssey JavaScript chargé!");
 
-function sanitizeHTML(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
+  ajouterStylesAnimations();
+  validerFormulaireContact();
+  initialiserPageMissions();
+  initialiserModaleFavoris();
+  ajouterValidationTempsReel();
 
-// Exporter pour utilisation globale si nécessaire
+  const boutonDone = document.querySelector(".bouton-fermer");
+  if (boutonDone) {
+    boutonDone.addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+  }
+});
+
+// Exporter pour utilisation globale
 window.SpaceOdyssey = {
   missions,
   favoris,
@@ -1002,192 +1271,67 @@ window.SpaceOdyssey = {
   supprimerMission,
   toggleFavori,
 };
-//pour header
-function initialiserModaleFavoris() {
-  const btnOuvrir = document.getElementById('btn-ouvrir-favoris');
-  const btnFermer = document.getElementById('btn-fermer-favoris');
-  const overlay = document.getElementById('modal-favoris-overlay');
-  const modal = document.getElementById('modal-favoris');
-  const btnVider = document.getElementById('btn-vider-favoris');
-  
-  if (!btnOuvrir || !modal) return;
-  
-  // Ouvrir la modale
-  btnOuvrir.addEventListener('click', function() {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Bloquer le scroll
-    afficherFavorisModalе();
-  });
-  
-  // Fermer la modale
-  function fermerModale() {
-    modal.classList.remove('active');
-    document.body.style.overflow = ''; // Réactiver le scroll
-  }
-  
-  if (btnFermer) {
-    btnFermer.addEventListener('click', fermerModale);
-  }
-  
-  if (overlay) {
-    overlay.addEventListener('click', fermerModale);
-  }
-  
-  // Fermer avec Échap
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && modal.classList.contains('active')) {
-      fermerModale();
-    }
-  });
-  
-  // Vider tous les favoris
-  if (btnVider) {
-    btnVider.addEventListener('click', function() {
-      if (confirm('⚠️ Êtes-vous sûr de vouloir supprimer tous vos favoris ?')) {
-        favoris = [];
-        sauvegarderFavoris();
-        mettreAJourBadgeFavoris();
-        afficherFavorisModale();
-        afficherMissionsFromData(); // Rafraîchir la page missions
-        afficherNotification('🗑️ Tous les favoris ont été supprimés');
-      }
+function filtrerMissions() {
+  const recherche = document
+    .getElementById("recherche-missions")
+    .value.toLowerCase();
+  const agence = document.getElementById("filtre-agence").value.toLowerCase();
+  const annee = document.getElementById("filtre-annee").value;
+  const type = document.getElementById("filtre-type").value.toLowerCase();
+
+  const conteneur = document.getElementById("conteneur-missions");
+  conteneur.innerHTML = "";
+
+  missions
+    .filter((mission) => {
+      const matchRecherche =
+        mission.name.toLowerCase().includes(recherche) ||
+        mission.objective.toLowerCase().includes(recherche);
+      const matchAgence = !agence || mission.agency.toLowerCase() === agence;
+      const matchAnnee =
+        !annee ||
+        new Date(mission.launchDate).getFullYear().toString() === annee;
+      const matchType =
+        !type || (mission.typeMission || "").toLowerCase() === type;
+
+      return matchRecherche && matchAgence && matchAnnee && matchType;
+    })
+    .forEach((mission) => {
+      const el = creerElementMission(mission);
+      conteneur.appendChild(el);
     });
-  }
 }
-
-// Afficher les favoris dans la modale
-function afficherFavorisModale() {
-  const conteneur = document.getElementById('modal-favoris-body');
-  const emptyState = document.getElementById('favoris-empty');
-  const totalCount = document.getElementById('favoris-total-count');
-  
-  if (!conteneur) return;
-  
-  // Mettre à jour le compteur
-  if (totalCount) {
-    totalCount.textContent = favoris.length;
-  }
-  
-  // Si aucun favori
-  if (favoris.length === 0) {
-    if (emptyState) {
-      emptyState.style.display = 'block';
-    }
-    // Cacher toutes les cartes existantes
-    conteneur.querySelectorAll('.carte-favori').forEach(carte => carte.remove());
-    return;
-  }
-  
-  // Cacher l'état vide
-  if (emptyState) {
-    emptyState.style.display = 'none';
-  }
-  
-  // Supprimer les anciennes cartes
-  conteneur.querySelectorAll('.carte-favori').forEach(carte => carte.remove());
-  
-  // Afficher les cartes favoris
-  favoris.forEach(missionId => {
-    const mission = missions.find(m => m.id === missionId);
-    if (!mission) return;
-    
-    const carte = creerCarteFavori(mission);
-    conteneur.appendChild(carte);
+const btnModifier = section.querySelector(".btn-modifier");
+if (btnModifier && !btnModifier.disabled) {
+  btnModifier.addEventListener("click", function () {
+    afficherFormulaireModification(mission, section);
   });
 }
 
-// Créer une carte favori
-function creerCarteFavori(mission) {
-  const carte = document.createElement('div');
-  carte.className = 'carte-favori';
-  carte.dataset.missionId = mission.id;
-  
-  carte.innerHTML = `
-    <div class="carte-favori-image">
-      <img src="${mission.image}" alt="${mission.name}" onerror="this.src='images/default.png'">
-    </div>
-    <div class="carte-favori-content">
-      <h3 class="carte-favori-titre">
-        <span>⭐</span>
-        ${mission.name}
-      </h3>
-      <div class="carte-favori-info">
-        <span><strong>Agence:</strong> ${mission.agency}</span>
-        <span><strong>Date:</strong> ${new Date(mission.launchDate).toLocaleDateString('fr-FR')}</span>
-      </div>
-      <p class="carte-favori-description">${mission.description}</p>
-      <div class="carte-favori-actions">
-        <button class="btn-retirer-favori" data-id="${mission.id}">
-          Retirer
-        </button>
-        <button class="btn-voir-details" data-id="${mission.id}">
-          Voir détails
-        </button>
-      </div>
-    </div>
+function afficherFormulaireModification(mission, section) {
+  const form = document.createElement("form");
+  form.className = "form-edit-mission";
+  form.innerHTML = `
+    <input type="text" id="edit-nom" value="${mission.name}" required>
+    <input type="text" id="edit-agence" value="${mission.agency}" required>
+    <input type="text" id="edit-objectif" value="${mission.objective}" required>
+    <textarea id="edit-description" rows="3">${mission.description}</textarea>
+    <button type="submit">Enregistrer</button>
   `;
-  
-  // Événement retirer
-  const btnRetirer = carte.querySelector('.btn-retirer-favori');
-  btnRetirer.addEventListener('click', function() {
-    carte.classList.add('removing');
-    setTimeout(() => {
-      toggleFavori(mission.id);
-      afficherFavorisModale();
-    }, 400);
+  section.appendChild(form);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    mission.name = document.getElementById("edit-nom").value;
+    mission.agency = document.getElementById("edit-agence").value;
+    mission.objective = document.getElementById("edit-objectif").value;
+    mission.description = document.getElementById("edit-description").value;
+    afficherNotification(" Mission modifiée avec succès !");
+    afficherMissionsFromData();
   });
-  
-  // Événement voir détails
-  const btnVoir = carte.querySelector('.btn-voir-details');
-  btnVoir.addEventListener('click', function() {
-    // Fermer la modale
-    document.getElementById('modal-favoris').classList.remove('active');
-    document.body.style.overflow = '';
-    
-    // Scroller vers la mission sur la page
-    if (window.location.pathname.includes('missions.html')) {
-      const missionElement = document.querySelector(`[data-mission-id="${mission.id}"]`);
-      if (missionElement) {
-        missionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        missionElement.style.animation = 'pulse 1s ease';
-      }
-    } else {
-      // Rediriger vers la page missions
-      window.location.href = `missions.html?mission=${mission.id}`;
-    }
-  });
-  
-  return carte;
 }
-
-// Mettre à jour le badge de compteur
-function mettreAJourBadgeFavoris() {
-  const badge = document.getElementById('favoris-count');
-  if (!badge) return;
-  
-  if (favoris.length > 0) {
-    badge.textContent = favoris.length;
-    badge.style.display = 'block';
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-// Mettre à jour toggleFavori pour inclure le badge
-const originalToggleFavori = toggleFavori;
-toggleFavori = function(missionId) {
-  originalToggleFavori(missionId);
-  mettreAJourBadgeFavoris();
-  
-  // Si la modale est ouverte, la rafraîchir
-  const modal = document.getElementById('modal-favoris');
-  if (modal && modal.classList.contains('active')) {
-    afficherFavorisModale();
-  }
-};
-
-// Initialiser au chargement
-document.addEventListener('DOMContentLoaded', function() {
-  initialiserModaleFavoris();
-  mettreAJourBadgeFavoris();
+btnOuvrir.addEventListener("click", function () {
+  const modal = document.getElementById("modal-favoris");
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
 });

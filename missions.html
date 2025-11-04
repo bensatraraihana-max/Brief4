@@ -32,6 +32,43 @@
             <option value="Arabic">Arabic</option>
           </select>
         </div>
+        <button
+          id="btn-ouvrir-favoris"
+          style="
+            position: relative;
+            background: transparent;
+            border: 2px solid #ffd700;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          ⭐ Favoris
+          <span
+            id="favoris-count"
+            style="
+              position: absolute;
+              top: -8px;
+              right: -8px;
+              background-color: #ff4444;
+              color: white;
+              border-radius: 50%;
+              width: 24px;
+              height: 24px;
+              display: none;
+              align-items: center;
+              justify-content: center;
+              font-size: 12px;
+              font-weight: 700;
+            "
+            >0</span
+          >
+        </button>
         <img src="images/notification.png" alt="" />
         <img src="images/Avatar.png" alt="" />
       </div>
@@ -67,7 +104,7 @@
     <div class="sectionM">
       <div class="text">
         <h1>Space Missions</h1>
-        <p style=" border-radius: 10px; padding: 20px">
+        <p style="border-radius: 10px; padding: 20px">
           Explore some of the most iconic and groundbreaking missions that have
           expanded our understanding of the universe. Each of these missions
           represents a remarkable step forward in space exploration and human
@@ -80,6 +117,37 @@
     </div>
 
     <!-- MISSIONS DYNAMIQUES -->
+    <div id="modal-favoris">
+      <div id="modal-favoris-overlay"></div>
+      <div id="modal-favoris-content">
+        <div id="modal-favoris-header">
+          <h2>
+            ⭐ Mes Missions Favorites
+            <span id="favoris-total-count">0</span>
+          </h2>
+          <div class="modal-favoris-actions">
+            <button id="btn-vider-favoris">🗑️ Vider tout</button>
+            <button id="btn-fermer-favoris">✕ Fermer</button>
+          </div>
+        </div>
+        <div id="modal-favoris-body">
+          <div
+            id="favoris-empty"
+            style="text-align: center; padding: 80px 20px"
+          >
+            <div id="favoris-empty-icon">⭐</div>
+            <h3 style="color: #666; font-size: 24px; margin-bottom: 10px">
+              Aucun favori pour le moment
+            </h3>
+            <p style="color: #999; font-size: 16px">
+              Ajoutez des missions à vos favoris pour les retrouver facilement
+              ici!
+            </p>
+          </div>
+          <!-- Les cartes de favoris seront ajoutées ici dynamiquement -->
+        </div>
+      </div>
+    </div>
     <!-- Le contenu sera généré par JavaScript -->
     <div class="mission" style="display: none"></div>
 
