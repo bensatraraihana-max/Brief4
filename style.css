@@ -2955,7 +2955,53 @@ option {
   border-radius: 5px;
   cursor: pointer;
 }
-/* --- RENDRE LA FENÊTRE DES FAVORIS CLAIRE ET NON SOMBRE --- */
+/* ==========================================
+   MODALE DES FAVORIS - VERSION AMÉLIORÉE
+   ========================================== */
+
+/* Bouton d'ouverture des favoris dans le header */
+#btn-ouvrir-favoris {
+  position: relative;
+  background: #ffd700;
+  border: 2px solid #ffd700;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#btn-ouvrir-favoris:hover {
+  background-color: #ffc700;
+  border-color: #ffc700;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+/* Badge de compteur */
+#favoris-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+/* Conteneur principal de la modale */
 #modal-favoris {
   position: fixed;
   top: 0;
@@ -2965,32 +3011,497 @@ option {
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.8) !important; /* clair et visible */
   z-index: 9999;
+  backdrop-filter: blur(8px);
 }
 
 #modal-favoris.active {
   display: flex;
+  animation: fadeIn 0.3s ease-out;
 }
 
+/* Contenu de la modale - FOND BLANC CLAIR */
 #modal-favoris-content {
-  background: #ffffff;
+  background-color: #ffffff;
+  border-radius: 20px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: slideUpIn 0.4s ease-out;
+  border: 3px solid #ffd700;
+}
+
+@keyframes slideUpIn {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* En-tête de la modale - FOND NOIR AVEC BORDURE DORÉE */
+#modal-favoris-header {
+  background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+  color: white;
+  padding: 25px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 4px solid #ffd700;
+}
+
+#modal-favoris-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #ffffff;
+}
+
+#favoris-total-count {
+  background-color: #ffd700;
   color: #000;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Boutons d'action dans le header */
+.modal-favoris-actions {
+  display: flex;
+  gap: 10px;
+}
+
+#btn-vider-favoris {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+#btn-vider-favoris:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+}
+
+#btn-fermer-favoris {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+#btn-fermer-favoris:hover {
+  background-color: white;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* Corps de la modale - FOND GRIS TRÈS CLAIR */
+#modal-favoris-body {
   padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-  width: 80%;
-  max-width: 800px;
-  max-height: 85%;
   overflow-y: auto;
+  flex: 1;
+  background-color: #f8f9fa;
 }
 
-#modal-favoris-body h3,
-#modal-favoris-body p {
-  color: #000;
+/* État vide */
+#favoris-empty {
+  text-align: center;
+  padding: 80px 20px;
+  display: none;
+  background-color: white;
+  border-radius: 15px;
+  margin: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-#favoris-empty h3,
+#favoris-empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+#favoris-empty h3 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
 #favoris-empty p {
-  color: #333 !important;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Cartes de favoris - FOND BLANC PUR */
+.carte-favori {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  gap: 20px;
+  transition: all 0.3s;
+  animation: fadeIn 0.4s ease-out;
+  border: 2px solid #e0e0e0;
+}
+
+.carte-favori:hover {
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+  transform: translateY(-3px);
+  border-color: #ffd700;
+}
+
+.carte-favori.removing {
+  animation: slideOut 0.4s ease-in;
+}
+
+/* Image de la carte favori */
+.carte-favori-image {
+  flex-shrink: 0;
+  width: 180px;
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.carte-favori-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.carte-favori:hover .carte-favori-image img {
+  transform: scale(1.05);
+}
+
+/* Contenu de la carte favori */
+.carte-favori-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.carte-favori-titre {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carte-favori-titre span {
+  color: #ffd700;
+  font-size: 20px;
+}
+
+/* Informations de la carte */
+.carte-favori-info {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #666;
+}
+
+.carte-favori-info strong {
+  color: #000;
+  font-weight: 600;
+}
+
+/* Description */
+.carte-favori-description {
+  color: #444;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Actions de la carte */
+.carte-favori-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.btn-retirer-favori,
+.btn-voir-details {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.btn-retirer-favori {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-retirer-favori:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+}
+
+.btn-voir-details {
+  background-color: #2196f3;
+  color: white;
+}
+
+.btn-voir-details:hover {
+  background-color: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+/* Scrollbar personnalisée pour la modale */
+#modal-favoris-body::-webkit-scrollbar {
+  width: 12px;
+}
+
+#modal-favoris-body::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+#modal-favoris-body::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 10px;
+}
+
+#modal-favoris-body::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* ==========================================
+   AMÉLIORATION DES FORMULAIRES
+   ========================================== */
+
+/* Tous les inputs, selects et textareas */
+input,
+select,
+textarea {
+  color: #000 !important;
+  background-color: #fff !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #999 !important;
+}
+
+/* Options des select */
+option {
+  color: #000 !important;
+  background-color: #fff !important;
+}
+
+/* Formulaire d'ajout/modification de mission */
+#form-mission input,
+#form-mission textarea,
+#form-mission select {
+  background-color: #fff !important;
+  color: #000 !important;
+  border: 2px solid #ddd;
+}
+
+#form-mission input:focus,
+#form-mission textarea:focus,
+#form-mission select:focus {
+  border-color: #000 !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN POUR LA MODALE
+   ========================================== */
+
+@media (max-width: 768px) {
+  #modal-favoris-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  #modal-favoris-header {
+    padding: 20px;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  #modal-favoris-header h2 {
+    font-size: 22px;
+  }
+
+  .modal-favoris-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  #modal-favoris-body {
+    padding: 20px;
+  }
+
+  .carte-favori {
+    flex-direction: column;
+  }
+
+  .carte-favori-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .carte-favori-actions {
+    flex-direction: column;
+  }
+
+  .btn-retirer-favori,
+  .btn-voir-details {
+    width: 100%;
+  }
+
+  #favoris-empty {
+    padding: 40px 20px;
+  }
+
+  #favoris-empty-icon {
+    font-size: 60px;
+  }
+
+  #favoris-empty h3 {
+    font-size: 20px;
+  }
+
+  #favoris-empty p {
+    font-size: 14px;
+  }
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+/* Fenêtre Favoris claire */
+#modal-favoris { 
+  background: rgba(255,255,255,0.9)!important; 
+  backdrop-filter: blur(4px);
+}
+
+/* Cartes missions */
+.mission-card-simple {
+  background:#fff;
+  border-radius:10px;
+  padding:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+  color:#000;
+}
+.mission-card-simple .actions button {
+  margin-top:10px;
+  margin-right:10px;
+  padding:8px 15px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+button.favori{background:#FFD700;color:#000;}
+.mission-card-simple button:not(.favori){background:#2196F3;color:#fff;}
+.mission-card-simple button:last-child{background:#f44336;}
+
+/* Fenêtre modification / ajout */
+#form-overlay {
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.4);
+  display:flex;align-items:center;justify-content:center;
+  z-index:10000;
+}
+.form-popup {
+  background:#fff;padding:25px;border-radius:10px;
+  width:350px;box-shadow:0 0 15px rgba(0,0,0,0.3);
+}
+.form-popup input,.form-popup textarea {
+  width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:5px;color:#000;
+}
+.form-actions{display:flex;justify-content:space-between;}
+.notif {
+  position:fixed;top:20px;right:20px;background:#000;color:#fff;
+  padding:10px 20px;border-radius:6px;z-index:20000;
+}
+button.btn-supprimer {
+  background-color: #f44336 !important;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+button.btn-supprimer:hover {
+  background-color: #d32f2f;
 }

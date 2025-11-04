@@ -159,7 +159,6 @@ function toggleFavori(missionId) {
   sauvegarderFavoris();
   afficherMissionsFromData();
 
-  // Rafraîchir la modale si elle est ouverte
   const modal = document.getElementById("modal-favoris");
   if (modal && modal.classList.contains("active")) {
     afficherFavorisModale();
@@ -308,7 +307,6 @@ function creerCarteFavori(mission) {
       );
       if (missionElement) {
         missionElement.scrollIntoView({ behavior: "smooth", block: "center" });
-        missionElement.style.animation = "pulse 1s ease";
       }
     } else {
       window.location.href = `missions.html?mission=${mission.id}`;
@@ -359,10 +357,7 @@ function validerFormulaireContact() {
       afficherErreur("email", "L'email est obligatoire");
       formulaireValide = false;
     } else if (!regexEmail.test(email)) {
-      afficherErreur(
-        "email",
-        "L'email n'est pas valide (ex: exemple@domaine.com)"
-      );
+      afficherErreur("email", "L'email n'est pas valide");
       formulaireValide = false;
     }
 
@@ -389,19 +384,7 @@ function validerFormulaireContact() {
     }
 
     if (formulaireValide) {
-      console.log("Formulaire valide:", {
-        prenom,
-        nom,
-        email,
-        telephone,
-        message,
-      });
       window.location.href = "message.html";
-    } else {
-      const premiereErreur = document.querySelector(".message-erreur");
-      if (premiereErreur) {
-        premiereErreur.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
     }
   });
 }
@@ -462,8 +445,7 @@ function creerInterfaceMissions() {
   const barreRecherche = document.createElement("input");
   barreRecherche.type = "text";
   barreRecherche.id = "recherche-missions";
-  barreRecherche.placeholder =
-    "Rechercher par nom, agence, objectif ou date...";
+  barreRecherche.placeholder = "Rechercher par nom ou objectif...";
   barreRecherche.style.cssText = `
     width: 100%;
     padding: 15px 20px;
@@ -473,6 +455,7 @@ function creerInterfaceMissions() {
     margin-bottom: 20px;
     transition: border-color 0.3s;
     color: #000;
+    background-color: #fff;
   `;
   barreRecherche.addEventListener(
     "focus",
@@ -594,12 +577,13 @@ function creerFiltresMultiples(conteneur) {
     border-radius: 5px;
     cursor: pointer;
     color: #000;
+    background-color: #fff;
   `;
 
   const agencesUniques = [...new Set(missions.map((m) => m.agency))];
-  selectAgence.innerHTML = `<option value="">Toutes les agences</option>`;
+  selectAgence.innerHTML = `<option value="" style="color: #000;">Toutes les agences</option>`;
   agencesUniques.forEach((agence) => {
-    selectAgence.innerHTML += `<option value="${agence}">${agence}</option>`;
+    selectAgence.innerHTML += `<option value="${agence}" style="color: #000;">${agence}</option>`;
   });
   selectAgence.addEventListener("change", filtrerMissions);
 
@@ -611,9 +595,9 @@ function creerFiltresMultiples(conteneur) {
   const anneesUniques = [
     ...new Set(missions.map((m) => new Date(m.launchDate).getFullYear())),
   ].sort((a, b) => b - a);
-  selectAnnee.innerHTML = `<option value="">Toutes les années</option>`;
+  selectAnnee.innerHTML = `<option value="" style="color: #000;">Toutes les années</option>`;
   anneesUniques.forEach((annee) => {
-    selectAnnee.innerHTML += `<option value="${annee}">${annee}</option>`;
+    selectAnnee.innerHTML += `<option value="${annee}" style="color: #000;">${annee}</option>`;
   });
   selectAnnee.addEventListener("change", filtrerMissions);
 
@@ -625,9 +609,9 @@ function creerFiltresMultiples(conteneur) {
   const typesUniques = [
     ...new Set(missions.map((m) => m.typeMission || "Non spécifié")),
   ];
-  selectType.innerHTML = `<option value="">Tous les types</option>`;
+  selectType.innerHTML = `<option value="" style="color: #000;">Tous les types</option>`;
   typesUniques.forEach((type) => {
-    selectType.innerHTML += `<option value="${type}">${type}</option>`;
+    selectType.innerHTML += `<option value="${type}" style="color: #000;">${type}</option>`;
   });
   selectType.addEventListener("change", filtrerMissions);
 
@@ -677,7 +661,6 @@ function creerElementMission(mission) {
   section.dataset.date = mission.launchDate;
 
   const estFavori = favoris.includes(mission.id);
-  const peutModifier = mission.id > 10;
 
   section.innerHTML = `
     <div class="mission-header">
@@ -714,10 +697,9 @@ function creerElementMission(mission) {
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
-            ${!peutModifier ? "opacity: 0.5; cursor: not-allowed;" : ""}
-          " ${!peutModifier ? "disabled" : ""}>Modifier</button>
+          ">Modifier</button>
           ${
-            peutModifier
+            mission.id > 10
               ? `
             <button class="btn-supprimer" data-id="${mission.id}" style="
               padding: 10px 20px;
@@ -745,11 +727,9 @@ function creerElementMission(mission) {
   btnFavori.addEventListener("click", () => toggleFavori(mission.id));
 
   const btnModifier = section.querySelector(".btn-modifier");
-  if (btnModifier && peutModifier) {
-    btnModifier.addEventListener("click", () =>
-      afficherFormulaireModification(mission.id)
-    );
-  }
+  btnModifier.addEventListener("click", () =>
+    afficherFormulaireModification(mission.id)
+  );
 
   const btnSupprimer = section.querySelector(".btn-supprimer");
   if (btnSupprimer) {
@@ -793,12 +773,9 @@ function filtrerMissions() {
     );
     const missionType = (missionData?.typeMission || "").toLowerCase();
 
+    // Recherche par nom OU objectif
     const correspondRecherche =
-      !recherche ||
-      name.includes(recherche) ||
-      missionAgency.includes(recherche) ||
-      objective.includes(recherche) ||
-      date.includes(recherche);
+      !recherche || name.includes(recherche) || objective.includes(recherche);
 
     const correspondAgence = !agence || missionAgency.includes(agence);
     const correspondAnnee = !annee || missionAnnee === annee;
@@ -861,14 +838,14 @@ function afficherFormulaireMission(mission) {
     : "Ajouter une nouvelle mission";
 
   contenu.innerHTML = `
-    <h2 style="color: #000; margin-bottom: 25px; font-size: 24px;">${titre}</h2>
+    <h2 style="color: #000; margin-bottom: 25px; font-size: 24px; font-weight: 700;">${titre}</h2>
     <form id="form-mission">
       <div style="margin-bottom: 20px;">
         <label style="display: block; color: #000; margin-bottom: 8px; font-weight: 600;">Nom de la mission *</label>
         <input type="text" id="mission-nom" value="${
           mission?.name || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000; background-color: #fff;">
       </div>
       
       <div style="margin-bottom: 20px;">
@@ -876,7 +853,7 @@ function afficherFormulaireMission(mission) {
         <input type="text" id="mission-agence" value="${
           mission?.agency || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000; background-color: #fff;">
       </div>
       
       <div style="margin-bottom: 20px;">
@@ -884,7 +861,7 @@ function afficherFormulaireMission(mission) {
         <input type="date" id="mission-date" value="${
           mission?.launchDate || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000; background-color: #fff;">
       </div>
       
       <div style="margin-bottom: 20px;">
@@ -892,30 +869,30 @@ function afficherFormulaireMission(mission) {
         <input type="text" id="mission-objectif" value="${
           mission?.objective || ""
         }" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000; background-color: #fff;">
       </div>
       
       <div style="margin-bottom: 20px;">
         <label style="display: block; color: #000; margin-bottom: 8px; font-weight: 600;">Type de mission *</label>
         <select id="mission-type" required 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
-          <option value="">Sélectionnez un type</option>
-          <option value="Exploration lunaire" ${
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000; background-color: #fff;">
+          <option value="" style="color: #000;">Sélectionnez un type</option>
+          <option value="Exploration lunaire" style="color: #000;" ${
             mission?.typeMission === "Exploration lunaire" ? "selected" : ""
           }>Exploration lunaire</option>
-          <option value="Exploration planétaire" ${
+          <option value="Exploration planétaire" style="color: #000;" ${
             mission?.typeMission === "Exploration planétaire" ? "selected" : ""
           }>Exploration planétaire</option>
-          <option value="Observation spatiale" ${
+          <option value="Observation spatiale" style="color: #000;" ${
             mission?.typeMission === "Observation spatiale" ? "selected" : ""
           }>Observation spatiale</option>
-          <option value="Exploration spatiale" ${
+          <option value="Exploration spatiale" style="color: #000;" ${
             mission?.typeMission === "Exploration spatiale" ? "selected" : ""
           }>Exploration spatiale</option>
-          <option value="Satellite" ${
+          <option value="Satellite" style="color: #000;" ${
             mission?.typeMission === "Satellite" ? "selected" : ""
           }>Satellite</option>
-          <option value="Station spatiale" ${
+          <option value="Station spatiale" style="color: #000;" ${
             mission?.typeMission === "Station spatiale" ? "selected" : ""
           }>Station spatiale</option>
         </select>
@@ -924,7 +901,7 @@ function afficherFormulaireMission(mission) {
       <div style="margin-bottom: 25px;">
         <label style="display: block; color: #000; margin-bottom: 8px; font-weight: 600;">Description *</label>
         <textarea id="mission-description" required rows="5" 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical; color: #000;">${
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical; color: #000; background-color: #fff;">${
             mission?.description || ""
           }</textarea>
       </div>
@@ -932,7 +909,7 @@ function afficherFormulaireMission(mission) {
       <div style="margin-bottom: 25px;">
         <label style="display: block; color: #000; margin-bottom: 8px; font-weight: 600;">Image de la mission</label>
         <input type="file" id="mission-image" accept="image/*" 
-          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000;">
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; color: #000; background-color: #fff;">
         <small style="color: #666; display: block; margin-top: 5px;">Formats acceptés: JPG, PNG, GIF (max 5MB)</small>
         ${
           mission?.image
@@ -952,7 +929,7 @@ function afficherFormulaireMission(mission) {
           cursor: pointer;
           font-weight: 600;
           font-size: 15px;
-        ">${mission ? "✓ Enregistrer" : "+ Ajouter"}</button>
+        ">${mission ? "✓ Enregistrer" : "➕ Ajouter"}</button>
         <button type="button" id="btn-annuler-mission" style="
           flex: 1;
           padding: 14px;
@@ -1094,74 +1071,6 @@ function afficherNotification(message) {
 }
 
 // ==========================================
-// VALIDATION EN TEMPS RÉEL
-// ==========================================
-function ajouterValidationTempsReel() {
-  const champsValidation = {
-    firstName: {
-      regex: /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]{2,}$/,
-      message: "Le prénom doit contenir au moins 2 caractères valides",
-    },
-    lastName: {
-      regex: /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]{2,}$/,
-      message: "Le nom doit contenir au moins 2 caractères valides",
-    },
-    email: {
-      regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      message: "Format: exemple@domaine.com",
-    },
-    phone: {
-      regex: /^[0-9]{10}$/,
-      message: "Le téléphone doit contenir 10 chiffres",
-      optional: true,
-    },
-    message: {
-      minLength: 10,
-      message: "Le message doit contenir au moins 10 caractères",
-    },
-  };
-
-  Object.keys(champsValidation).forEach((champId) => {
-    const champ = document.getElementById(champId);
-    if (!champ) return;
-
-    champ.addEventListener("blur", function () {
-      const valeur = this.value.trim();
-      const config = champsValidation[champId];
-
-      const ancienMessage = this.parentElement.querySelector(".message-erreur");
-      if (ancienMessage) ancienMessage.remove();
-
-      if (valeur === "" && !config.optional) {
-        afficherErreur(champId, "Ce champ est obligatoire");
-        return;
-      }
-
-      if (valeur !== "") {
-        if (config.regex && !config.regex.test(valeur.replace(/\s/g, ""))) {
-          afficherErreur(champId, config.message);
-          return;
-        }
-
-        if (config.minLength && valeur.length < config.minLength) {
-          afficherErreur(champId, config.message);
-          return;
-        }
-      }
-
-      this.style.borderBottomColor = "#4CAF50";
-      this.style.borderBottomWidth = "2px";
-    });
-
-    champ.addEventListener("focus", function () {
-      const ancienMessage = this.parentElement.querySelector(".message-erreur");
-      if (ancienMessage) ancienMessage.remove();
-      this.style.borderBottomColor = "#000";
-    });
-  });
-}
-
-// ==========================================
 // STYLES ET ANIMATIONS
 // ==========================================
 function ajouterStylesAnimations() {
@@ -1205,10 +1114,10 @@ function ajouterStylesAnimations() {
     
     @keyframes pulse {
       0%, 100% {
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transform: scale(1);
       }
       50% {
-        box-shadow: 0 8px 30px rgba(255,215,0,0.5);
+        transform: scale(1.1);
       }
     }
     
@@ -1252,7 +1161,6 @@ document.addEventListener("DOMContentLoaded", function () {
   validerFormulaireContact();
   initialiserPageMissions();
   initialiserModaleFavoris();
-  ajouterValidationTempsReel();
 
   const boutonDone = document.querySelector(".bouton-fermer");
   if (boutonDone) {
@@ -1271,67 +1179,3 @@ window.SpaceOdyssey = {
   supprimerMission,
   toggleFavori,
 };
-function filtrerMissions() {
-  const recherche = document
-    .getElementById("recherche-missions")
-    .value.toLowerCase();
-  const agence = document.getElementById("filtre-agence").value.toLowerCase();
-  const annee = document.getElementById("filtre-annee").value;
-  const type = document.getElementById("filtre-type").value.toLowerCase();
-
-  const conteneur = document.getElementById("conteneur-missions");
-  conteneur.innerHTML = "";
-
-  missions
-    .filter((mission) => {
-      const matchRecherche =
-        mission.name.toLowerCase().includes(recherche) ||
-        mission.objective.toLowerCase().includes(recherche);
-      const matchAgence = !agence || mission.agency.toLowerCase() === agence;
-      const matchAnnee =
-        !annee ||
-        new Date(mission.launchDate).getFullYear().toString() === annee;
-      const matchType =
-        !type || (mission.typeMission || "").toLowerCase() === type;
-
-      return matchRecherche && matchAgence && matchAnnee && matchType;
-    })
-    .forEach((mission) => {
-      const el = creerElementMission(mission);
-      conteneur.appendChild(el);
-    });
-}
-const btnModifier = section.querySelector(".btn-modifier");
-if (btnModifier && !btnModifier.disabled) {
-  btnModifier.addEventListener("click", function () {
-    afficherFormulaireModification(mission, section);
-  });
-}
-
-function afficherFormulaireModification(mission, section) {
-  const form = document.createElement("form");
-  form.className = "form-edit-mission";
-  form.innerHTML = `
-    <input type="text" id="edit-nom" value="${mission.name}" required>
-    <input type="text" id="edit-agence" value="${mission.agency}" required>
-    <input type="text" id="edit-objectif" value="${mission.objective}" required>
-    <textarea id="edit-description" rows="3">${mission.description}</textarea>
-    <button type="submit">Enregistrer</button>
-  `;
-  section.appendChild(form);
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    mission.name = document.getElementById("edit-nom").value;
-    mission.agency = document.getElementById("edit-agence").value;
-    mission.objective = document.getElementById("edit-objectif").value;
-    mission.description = document.getElementById("edit-description").value;
-    afficherNotification(" Mission modifiée avec succès !");
-    afficherMissionsFromData();
-  });
-}
-btnOuvrir.addEventListener("click", function () {
-  const modal = document.getElementById("modal-favoris");
-  modal.classList.add("active");
-  document.body.style.overflow = "hidden";
-});
