@@ -204,7 +204,7 @@ function initialiserModaleFavoris() {
 
   if (btnVider) {
     btnVider.addEventListener("click", function () {
-      if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer tous vos favoris ?")) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer tous vos favoris ?")) {
         favoris = [];
         sauvegarderFavoris();
         afficherFavorisModale();
